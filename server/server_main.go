@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"net/http"
 
 	"time"
 
@@ -32,6 +34,12 @@ func main() {
 		Config:   config,
 		DbClient: database,
 	}
+	go func() {
+		http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprintf(w, "ok")
+		}))
+		http.ListenAndServe(":8080", nil)
+	}()
 
 	ticker := time.NewTicker(1 * time.Hour)
 	// Don't run the first tick instantly, because if there's a crash loop, we'll keep making requests.
