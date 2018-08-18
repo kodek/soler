@@ -35,10 +35,11 @@ func main() {
 		DbClient: database,
 	}
 	go func() {
+		glog.Info("Starting healthz server on port 10000")
 		http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "ok")
 		}))
-		http.ListenAndServe(":8080", nil)
+		http.ListenAndServe(":10000", nil)
 	}()
 
 	ticker := time.NewTicker(1 * time.Hour)
