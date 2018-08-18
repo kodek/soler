@@ -39,6 +39,14 @@ func main() {
 		http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "ok")
 		}))
+		http.Handle("/force", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := s.GetDataForToday()
+			if err != nil {
+				fmt.Fprint(w, "Error: %s", err.Error())
+			} else {
+				fmt.Fprintf(w, "Done")
+			}
+		}))
 		http.ListenAndServe(":10000", nil)
 	}()
 
