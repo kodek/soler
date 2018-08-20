@@ -47,6 +47,7 @@ func main() {
 				fmt.Fprintf(w, "Done")
 			}
 		}))
+		http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
 		http.ListenAndServe(":10000", nil)
 	}()
 

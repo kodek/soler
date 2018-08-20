@@ -77,7 +77,7 @@ func (s *Soler) GetDataForToday() error {
 		}
 		pointMap[vt] = point
 	}
-	err = s.DbClient.AddPoints(s.Config.SolarEdge.Site, pointMap)
+	err = s.DbClient.AddProductionPoints(s.Config.SolarEdge.Site, pointMap)
 	if err != nil {
 		return err
 	}

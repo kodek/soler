@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"bitbucket.org/kodek64/soler/greenbutton"
 	"github.com/golang/glog"
 	influxdb "github.com/influxdata/influxdb/client/v2"
 )
@@ -35,7 +36,7 @@ func NewDatabaseConnection(address string, username string, password string, dat
 	}, nil
 }
 
-func (d *Database) AddPoints(siteId int, points map[time.Time]SolarDatapoint) error {
+func (d *Database) AddProductionPoints(siteId int, points map[time.Time]SolarDatapoint) error {
 	glog.Infof("Writing %d data points to InfluxDB", len(points))
 
 	bp, err := influxdb.NewBatchPoints(influxdb.BatchPointsConfig{
@@ -66,5 +67,39 @@ func (d *Database) AddPoints(siteId int, points map[time.Time]SolarDatapoint) er
 		return err
 	}
 	glog.Info("Successfully wrote points to database")
+	return nil
+}
+
+func (d *Database) AddConsumptionPoints(points []greenbutton.GBPoint) error {
+	glog.Info("Writing %d consumption data points to InfluxDB", len(points))
+
+	bp, err := influxdb.NewBatchPoints(influxdb.BatchPointsConfig{
+		Database:  d.database,
+		Precision: "s",
+	})
+	if err != nil {
+		return err
+	}
+
+	tags := map[string]string{
+		"home_id_temp": "cuesta",
+	}
+
+	for _, p := range points {
+		fields := map[string]interface{}{
+			"usage_kwh": p.UsageKwh,
+		}
+		dbPoint, err := influxdb.NewPoint("consumption", tags, fields, p.T)
+		if err != nil {
+			return err
+		}
+		bp.AddPoint(dbPoint)
+	}
+
+	err = d.conn.Write(bp)
+	if err != nil {
+		return err
+	}
+	glog.Info("Successfully wrote consumption points to database")
 	return nil
 }
