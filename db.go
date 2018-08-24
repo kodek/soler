@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bitbucket.org/kodek64/soler/greenbutton"
+	"bitbucket.org/kodek64/soler/sense"
 	"github.com/golang/glog"
 	influxdb "github.com/influxdata/influxdb/client/v2"
 )
@@ -101,5 +102,36 @@ func (d *Database) AddConsumptionPoints(points []greenbutton.GBPoint) error {
 		return err
 	}
 	glog.Info("Successfully wrote consumption points to database")
+	return nil
+}
+
+func (d *Database) AddSenseRealtimePoint(p sense.RealtimeResponse) error {
+	bp, err := influxdb.NewBatchPoints(influxdb.BatchPointsConfig{
+		Database:  d.database,
+		Precision: "s",
+	})
+	if err != nil {
+		return err
+	}
+
+	tags := map[string]string{
+		"type": p.Type,
+	}
+
+	fields := map[string]interface{}{
+		"solar_w": p.Payload.SolarW,
+		"w":       p.Payload.W,
+	}
+	dbPoint, err := influxdb.NewPoint("sense_realtime", tags, fields, time.Unix(p.Payload.Epoch, 0))
+	if err != nil {
+		return err
+	}
+	bp.AddPoint(dbPoint)
+
+	err = d.conn.Write(bp)
+	if err != nil {
+		return err
+	}
+	glog.Info("Successfully wrote Sense point to database")
 	return nil
 }

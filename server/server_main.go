@@ -47,6 +47,12 @@ func main() {
 				fmt.Fprintf(w, "Done")
 			}
 		}))
+		http.Handle("/startsense", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			rec := soler.SenseRecorder{
+				Db: database,
+			}
+			go rec.StartAndLoop(config.Sense)
+		}))
 		http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
 		http.ListenAndServe(":10000", nil)
 	}()

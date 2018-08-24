@@ -10,6 +10,10 @@ type SolarEdge struct {
 	Site   int
 	ApiKey string
 }
+type Sense struct {
+	Email    string
+	Password string
+}
 
 type InfluxDbConfig struct {
 	Address  string
@@ -20,6 +24,7 @@ type InfluxDbConfig struct {
 
 type Configuration struct {
 	SolarEdge      SolarEdge
+	Sense          Sense
 	InfluxDbConfig InfluxDbConfig
 }
 
