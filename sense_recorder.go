@@ -1,8 +1,8 @@
 package soler
 
 import (
-	"bitbucket.org/kodek64/soler/sense"
 	"github.com/golang/glog"
+	sense "github.com/kodek/sense-api"
 )
 
 type SenseRecorder struct {
