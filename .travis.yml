@@ -1,0 +1,20 @@
+language: go
+env:
+  global:
+  - IMAGE_NAME=kodek/soler
+  - REGISTRY_USER=kodek
+  - secure: eRw8KXcg8DMUt5pNZyrO2oVLa4Acad1T7SSsxhkq1Yex6wl2jaTTVQte3zVncZUm69F6dPxG8hlAU+bg5oijGNP/PLODgmx4XEmgj+p56Zorq261GqCdz1X/9mUYvHWu9BiXKiBi3TDX7I1a6nxutpF8B7Gw+b4OpkgvnObwpLUIf/Bg2t2WHIH+YSqTPJjeEDnATmPXUwFuVzjoXlJ+i6bKekKoJDOPwpSx5b7mfHYjKF3QZ/3C8OnLG9qclB3Nur+PMIMG4eCXhsP2xSmTAsCI23g471fz99gjBkT7ZhGghu6GAUIp3SQ3l7K1qojv61Lo70yT56jyjUhi3KKf6Fma4VgcCeWCJ65sZODNbi/qOtwvN8/6gBvUEfWEVh4PyWCBiCktzjfJ0M8RBLZj1hWH1qbN1nl4jN1y7yZ3HetCLLu3WosnhuOLVglfv70ZgH75hu8hbbo5zF5dtJ0yJuo7ej+vwiy0V2t7ueuE/0Xuvf//k9QPxgzoF+oEu03w4PJTdkcNzzA42mZEGZZ3QC5tj4RLitKsr/aBHan42SlVlOhzLKmOfZuKVCMh/CKoAasktYF/8DKLoIfSJUjyXDDdMznF47KV8o2jXLAns14+PtVCczo/abIwsVTk7nOC4hl2mI4b7uj+9Oz6oV+NxNRKUERGr/HaoJOA03plfaE=
+go:
+- '1.11'
+script:
+- go test ./...
+- docker build -t "${IMAGE_NAME}:latest" .
+before_deploy:
+- docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+- docker tag "$IMAGE_NAME" "$IMAGE_NAME:latest"
+- docker tag "$IMAGE_NAME" "$IMAGE_NAME:${TRAVIS_BRANCH}"
+deploy:
+  provider: script
+  script: docker push "${IMAGE_NAME}:latest" && docker push "${IMAGE_NAME}:${TRAVIS_BRANCH}"
+  on:
+    branch: master
