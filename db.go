@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"bitbucket.org/kodek64/soler/greenbutton"
-	"bitbucket.org/kodek64/soler/sense"
 	"github.com/golang/glog"
 	influxdb "github.com/influxdata/influxdb/client/v2"
+	sense "github.com/kodek/sense-api"
 )
 
 type Database struct {
