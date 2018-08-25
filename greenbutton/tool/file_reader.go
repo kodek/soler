@@ -18,7 +18,7 @@ func ReadFile(path string) ([]greenbutton.GBPoint, error) {
 }
 
 func main() {
-	data, err := ReadFile("/Users/hcosi/Downloads/sce_electric_interval_data_Service 1_2017-07-19_to_2018-08-19.csv")
+	data, err := ReadFile("~/Downloads/sce_interval_data.csv")
 	if err != nil {
 		panic(err)
 	}

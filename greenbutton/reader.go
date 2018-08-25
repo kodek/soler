@@ -51,11 +51,11 @@ func Read(in string) ([]GBPoint, error) {
 
 	out := make([]GBPoint, 0)
 	for _, row := range rows {
-		beginTime, err := time.ParseInLocation("2006-01-02 15:04", fmt.Sprintf("%s %s", row.Date, row.StartTime), time.Now().Location())
+		beginTime, err := parseTime(row.Date, row.StartTime)
 		if err != nil {
 			return nil, err
 		}
-		endTime, err := time.ParseInLocation("2006-01-02 15:04", fmt.Sprintf("%s %s", row.Date, row.EndTime), time.Now().Location())
+		endTime, err := parseTime(row.Date, row.EndTime)
 		if err != nil {
 			return nil, err
 		}
@@ -77,4 +77,11 @@ func Read(in string) ([]GBPoint, error) {
 		})
 	}
 	return out, nil
+}
+
+// parseTime parses a date and time string and returns a local time.Time object
+// d: a date in the format of "2006-01-02"
+// t: a time in the format of "15:04"
+func parseTime(d string, t string) (time.Time, error) {
+	return time.ParseInLocation("2006-01-02 15:04", fmt.Sprintf("%s %s", d, t), time.Now().Location())
 }
