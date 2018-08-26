@@ -5,7 +5,7 @@ import (
 
 	"io/ioutil"
 
-	"bitbucket.org/kodek64/soler/greenbutton"
+	"github.com/kodek/soler/greenbutton"
 )
 
 func ReadFile(path string) ([]greenbutton.GBPoint, error) {

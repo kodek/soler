@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"bitbucket.org/kodek64/soler"
-	"bitbucket.org/kodek64/soler/fake"
+	"github.com/kodek/soler"
+	"github.com/kodek/soler/fake"
 )
 
 func main() {

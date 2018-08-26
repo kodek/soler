@@ -11,8 +11,8 @@ import (
 
 	"io/ioutil"
 
-	"bitbucket.org/kodek64/soler/greenbutton"
 	"github.com/golang/glog"
+	"github.com/kodek/soler/greenbutton"
 )
 
 const uploadTemplate = `

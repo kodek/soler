@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"bitbucket.org/kodek64/soler/greenbutton"
 	"github.com/golang/glog"
 	influxdb "github.com/influxdata/influxdb/client/v2"
 	sense "github.com/kodek/sense-api"
+	"github.com/kodek/soler/greenbutton"
 )
 
 type Database struct {
@@ -72,7 +72,7 @@ func (d *Database) AddProductionPoints(siteId int, points map[time.Time]SolarDat
 }
 
 func (d *Database) AddConsumptionPoints(points []greenbutton.GBPoint) error {
-	glog.Info("Writing %d consumption data points to InfluxDB", len(points))
+	glog.Infof("Writing %d consumption data points to InfluxDB", len(points))
 
 	bp, err := influxdb.NewBatchPoints(influxdb.BatchPointsConfig{
 		Database:  d.database,
