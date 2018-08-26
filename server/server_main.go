@@ -15,7 +15,7 @@ func main() {
 	flag.Set("logtostderr", "true")
 	flag.Parse()
 
-	glog.Info("Loading config")
+	glog.Info("Loading config...")
 	config := soler.LoadConfig()
 
 	client, err := soler.NewClient(config)
