@@ -10,6 +10,9 @@ ENV TRAVIS_COMMIT=$travis_commit
 
 ENV TZ America/Los_Angeles
 
+ENV ENABLE_SOLAREDGE_POLLING=true
+ENV ENABLE_SENSE_POLLING=true
+
 RUN echo $TZ > /etc/timezone && \
     apt-get update && apt-get install -y tzdata && \
     rm /etc/localtime && \
@@ -17,4 +20,7 @@ RUN echo $TZ > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
     apt-get clean
 
-ENTRYPOINT ["./server_main"]
+ENTRYPOINT [
+  "./server_main",
+  "--enable_solaredge_polling=$ENABLE_SOLAREDGE_POLLING",
+  "--enable_sense_polling=$ENABLE_SENSE_POLLING"]
