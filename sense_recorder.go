@@ -23,6 +23,7 @@ func (rec *SenseRecorder) StartAndLoop(conf Sense) {
 		}
 	}
 	glog.Fatal("Lost connection to Sense")
+
 }
 
 func (rec *SenseRecorder) connectOrDie(c sense.Client) <-chan sense.RealtimeResponse {

@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-
 	"time"
 
 	"github.com/golang/glog"
@@ -34,29 +33,34 @@ func main() {
 		Config:   config,
 		DbClient: database,
 	}
-	go func() {
-		glog.Info("Starting healthz server on port 10000")
-		http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "ok")
-		}))
-		http.Handle("/force", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := s.GetDataForToday()
-			if err != nil {
-				fmt.Fprintf(w, "Error: %s", err.Error())
-			} else {
-				fmt.Fprintf(w, "Done")
-			}
-		}))
-		http.Handle("/startsense", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			rec := soler.SenseRecorder{
-				Db: database,
-			}
-			go rec.StartAndLoop(config.Sense)
-		}))
-		http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
-		http.ListenAndServe(":10000", nil)
-	}()
 
+	go recordSolarEdge(s)
+
+	// Start HTTP server.
+	glog.Info("Starting HTTP server on port 10000 (/healthz)")
+	http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "ok")
+	}))
+	http.Handle("/force", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		err := s.GetDataForToday()
+		if err != nil {
+			fmt.Fprintf(w, "Error: %s", err.Error())
+		} else {
+			fmt.Fprintf(w, "Done")
+		}
+	}))
+	http.Handle("/startsense", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rec := soler.SenseRecorder{
+			Db: database,
+		}
+		go rec.StartAndLoop(config.Sense)
+	}))
+	http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
+	http.ListenAndServe(":10000", nil)
+
+}
+
+func recordSolarEdge(s soler.Soler) {
 	ticker := time.NewTicker(1 * time.Hour)
 	// Don't run the first tick instantly, because if there's a crash loop, we'll keep making requests.
 	glog.Info("Starting wait loop. First tick will be in 1 hour...")
@@ -64,4 +68,5 @@ func main() {
 		s.GetDataForToday()
 		glog.Info("Waiting for 1 hour...")
 	}
+
 }
