@@ -63,7 +63,7 @@ func main() {
 func recordSolarEdge(s soler.Soler) {
 	ticker := time.NewTicker(1 * time.Hour)
 	// Don't run the first tick instantly, because if there's a crash loop, we'll keep making requests.
-	glog.Info("Starting wait loop. First tick will be in 1 hour...")
+	glog.Info("Starting SolarEdge polling. First tick will be in 1 hour...")
 	for range ticker.C {
 		s.GetDataForToday()
 		glog.Info("Waiting for 1 hour...")
