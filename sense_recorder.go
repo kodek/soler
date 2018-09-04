@@ -1,6 +1,8 @@
 package soler
 
 import (
+	"time"
+
 	"github.com/golang/glog"
 	sense "github.com/kodek/sense-api"
 )
@@ -16,7 +18,10 @@ func (rec *SenseRecorder) StartAndLoop(config Sense) {
 	}
 	recv := rec.connectOrDie(c)
 
-	for response := range recv {
+	throttler := time.NewTicker(2 * time.Second)
+	for range throttler.C {
+		response := <-recv
+
 		err := rec.Db.AddSenseRealtimePoint(response)
 		if err != nil {
 			glog.Fatal("Cannot write to InfluxDb. ", err)
