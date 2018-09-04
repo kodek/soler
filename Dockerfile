@@ -6,6 +6,8 @@ WORKDIR /app
 COPY server_main .
 COPY start_soler.sh .
 
+RUN chmod +x ./start_soler.sh
+
 ARG travis_commit
 ENV TRAVIS_COMMIT=$travis_commit
 
