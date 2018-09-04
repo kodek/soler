@@ -19,7 +19,7 @@ func (rec *SenseRecorder) StartAndLoop(config Sense) {
 	for response := range recv {
 		err := rec.Db.AddSenseRealtimePoint(response)
 		if err != nil {
-			glog.Error("Cannot write to InfluxDb. ", err)
+			glog.Fatal("Cannot write to InfluxDb. ", err)
 		}
 	}
 	glog.Fatal("Lost connection to Sense")
