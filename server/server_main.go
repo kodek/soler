@@ -36,6 +36,7 @@ func main() {
 	}
 
 	go recordSolarEdge(s)
+	go recordSenseRealtime(s)
 
 	// Start HTTP server.
 	glog.Info("Starting HTTP server on port 10000 (/healthz)")
@@ -51,10 +52,6 @@ func main() {
 		}
 	}))
 	http.Handle("/startsense", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		rec := soler.SenseRecorder{
-			Db: database,
-		}
-		go rec.StartAndLoop(config.Sense)
 	}))
 	http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
 	http.ListenAndServe(":10000", nil)
@@ -69,5 +66,12 @@ func recordSolarEdge(s soler.Soler) {
 		s.GetDataForToday()
 		glog.Info("Waiting for 1 hour...")
 	}
+}
 
+func recordSenseRealtime(s soler.Soler) {
+	glog.Info("Starting Sense WSS connection...")
+	rec := soler.SenseRecorder{
+		Db: s.DbClient,
+	}
+	rec.StartAndLoop(s.Config.Sense)
 }
