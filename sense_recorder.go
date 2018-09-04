@@ -3,15 +3,14 @@ package soler
 import (
 	"github.com/golang/glog"
 	sense "github.com/kodek/sense-api"
-	"github.com/kodek/soler/config"
 )
 
 type SenseRecorder struct {
 	Db *Database
 }
 
-func (rec *SenseRecorder) StartAndLoop(conf config.Sense) {
-	c, err := sense.NewClient(conf.Email, conf.Password)
+func (rec *SenseRecorder) StartAndLoop(config Sense) {
+	c, err := sense.NewClient(config.Email, config.Password)
 	if err != nil {
 		panic(err)
 	}
