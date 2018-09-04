@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	enableSolerEdgePolling := flag.Bool("enable_solaredge_polling", true, "Poll SolarEdge servers")
+	enableSensePolling := flag.Bool("enable_sense_polling", true, "Poll Sense servers")
 	flag.Set("logtostderr", "true")
 	flag.Parse()
 
@@ -35,8 +37,16 @@ func main() {
 		DbClient: database,
 	}
 
-	go recordSolarEdge(s)
-	go recordSenseRealtime(s)
+	if *enableSolerEdgePolling {
+		go recordSolarEdge(s)
+	} else {
+		glog.Info("--enable_solaredge_polling has disabled SolarEdge recording.")
+	}
+	if *enableSensePolling {
+		go recordSenseRealtime(s)
+	} else {
+		glog.Info("--enable_sense_polling has disabled Sense recording.")
+	}
 
 	// Start HTTP server.
 	glog.Info("Starting HTTP server on port 10000 (/healthz)")
