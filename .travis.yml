@@ -9,7 +9,7 @@ go:
 script:
 - go test ./...
 - go build -o ./server_main server/server_main.go
-- docker build -t "${IMAGE_NAME}:latest" .
+- docker build -t "${IMAGE_NAME}:latest" --build-arg "travis_commit=${TRAVIS_COMMIT}" .
 before_deploy:
 - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
 - docker tag "$IMAGE_NAME" "$IMAGE_NAME:latest"

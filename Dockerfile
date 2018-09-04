@@ -5,6 +5,9 @@ WORKDIR /app
 # Now just add the binary
 COPY server_main .
 
+ARG travis_commit
+ENV TRAVIS_COMMIT=$travis_commit
+
 ENV TZ America/Los_Angeles
 
 RUN echo $TZ > /etc/timezone && \
