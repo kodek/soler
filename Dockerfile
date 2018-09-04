@@ -21,4 +21,4 @@ RUN echo $TZ > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
     apt-get clean
 
-ENTRYPOINT["./start_soler.sh"]
+ENTRYPOINT ["./start_soler.sh"]
