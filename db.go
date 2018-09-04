@@ -122,11 +122,29 @@ func (d *Database) AddSenseRealtimePoint(p sense.RealtimeResponse) error {
 		"solar_w": p.Payload.SolarW,
 		"w":       p.Payload.W,
 	}
-	dbPoint, err := influxdb.NewPoint("sense_realtime", tags, fields, time.Unix(p.Payload.Epoch, 0))
+	dbPoint, err := influxdb.NewPoint("sense_realtime_overall", tags, fields, time.Unix(p.Payload.Epoch, 0))
 	if err != nil {
 		return err
 	}
 	bp.AddPoint(dbPoint)
+
+	// Devices
+	for _, device := range p.Payload.Devices {
+		tags := map[string]string{
+			"id":   device.ID,
+			"name": device.Name,
+		}
+
+		fields := map[string]interface{}{
+			"w": device.W,
+		}
+
+		devicePoint, err := influxdb.NewPoint("sense_realtime_devices", tags, fields, time.Unix(p.Payload.Epoch, 0))
+		if err != nil {
+			return err
+		}
+		bp.AddPoint(devicePoint)
+	}
 
 	err = d.conn.Write(bp)
 	if err != nil {
