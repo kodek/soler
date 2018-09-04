@@ -14,17 +14,21 @@ func (rec *SenseRecorder) StartAndLoop(conf Sense) {
 	if err != nil {
 		panic(err)
 	}
-	recv, _, err := c.Realtime()
+	recv := rec.connectOrDie(c)
+
+	for response := range recv {
+		err := rec.Db.AddSenseRealtimePoint(response)
+		if err != nil {
+			glog.Error("Cannot write to InfluxDb. ", err)
+		}
+	}
+	glog.Fatal("Lost connection to Sense")
+}
+
+func (rec *SenseRecorder) connectOrDie(c sense.Client) <-chan sense.RealtimeResponse {
+	recv, err := c.Realtime(make(chan struct{}))
 	if err != nil {
 		glog.Fatal("Cannot connect to Sense realtime service. ", err)
 	}
-
-	for {
-		response := <-recv
-		err := rec.Db.AddSenseRealtimePoint(response)
-		if err != nil {
-			glog.Fatal("Cannot write to InfluxDb. ", err)
-		}
-	}
-
+	return recv
 }
