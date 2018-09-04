@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang/glog"
@@ -16,6 +17,13 @@ func main() {
 	enableSensePolling := flag.Bool("enable_sense_polling", true, "Poll Sense servers")
 	flag.Set("logtostderr", "true")
 	flag.Parse()
+	commitVersion := os.Getenv("TRAVIS_COMMIT")
+	glog.Info("Starting Soler")
+	if commitVersion != "" {
+		glog.Infof("Commit version: %s", commitVersion)
+	} else {
+		glog.Info("Commit version not known (set env variable TRAVIS_COMMIT)")
+	}
 
 	glog.Info("Loading config...")
 	config := soler.LoadConfig()
