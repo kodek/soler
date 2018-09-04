@@ -8,6 +8,8 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/kodek/soler"
+	"github.com/kodek/soler/config"
+	"github.com/kodek/soler/solaredge"
 )
 
 func main() {
@@ -15,14 +17,14 @@ func main() {
 	flag.Parse()
 
 	glog.Info("Loading config...")
-	config := soler.LoadConfig()
+	conf := config.LoadConfig()
 
-	client, err := soler.NewClient(config)
+	client, err := solaredge.NewClient(conf)
 	if err != nil {
 		panic(err)
 	}
 
-	dbConfig := config.InfluxDbConfig
+	dbConfig := conf.InfluxDbConfig
 	database, err := soler.NewDatabaseConnection(dbConfig.Address, dbConfig.Username, dbConfig.Password, dbConfig.Database)
 	if err != nil {
 		panic(err)
@@ -30,7 +32,7 @@ func main() {
 
 	s := soler.Soler{
 		Client:   client,
-		Config:   config,
+		Config:   conf,
 		DbClient: database,
 	}
 
@@ -53,7 +55,7 @@ func main() {
 		rec := soler.SenseRecorder{
 			Db: database,
 		}
-		go rec.StartAndLoop(config.Sense)
+		go rec.StartAndLoop(conf.Sense)
 	}))
 	http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
 	http.ListenAndServe(":10000", nil)

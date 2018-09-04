@@ -1,4 +1,4 @@
-package soler
+package solaredge
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/kodek/soler/config"
 
 	"github.com/golang/glog"
 )
@@ -51,12 +53,12 @@ const urlBase = "https://monitoringapi.solaredge.com"
 const version = "1.0.0"
 
 type Client struct {
-	Config        SolarEdge
+	Config        config.SolarEdge
 	HttpClient    *http.Client
 	SolarEdgeHost string
 }
 
-func NewClient(configuration Configuration) (*Client, error) {
+func NewClient(configuration config.Configuration) (*Client, error) {
 	httpClient := http.Client{
 		Timeout: time.Second * 2,
 	}

@@ -4,12 +4,15 @@ import (
 	"errors"
 	"time"
 
+	"github.com/kodek/soler/config"
+	"github.com/kodek/soler/solaredge"
+
 	"github.com/golang/glog"
 )
 
 type Soler struct {
-	Config   Configuration
-	Client   *Client
+	Config   config.Configuration
+	Client   *solaredge.Client
 	DbClient *Database
 }
 

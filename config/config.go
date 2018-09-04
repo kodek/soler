@@ -1,4 +1,4 @@
-package soler
+package config
 
 import (
 	"encoding/json"
