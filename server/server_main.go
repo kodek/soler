@@ -19,7 +19,7 @@ func main() {
 	glog.Info("Loading config...")
 	conf := config.LoadConfig()
 
-	client, err := solaredge.NewClient(conf)
+	client, err := solaredge.NewClient(conf.SolarEdge.Site, conf.SolarEdge.ApiKey)
 	if err != nil {
 		panic(err)
 	}

@@ -33,7 +33,7 @@ func main() {
 	//}
 
 	testServer := fake.NewServer()
-	client, _ := solaredge.NewClient(conf)
+	client, _ := solaredge.NewClient(conf.SolarEdge.Site, conf.SolarEdge.ApiKey)
 	client.HttpClient = testServer.Client()
 	client.SolarEdgeHost = testServer.URL
 

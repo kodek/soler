@@ -8,8 +8,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/kodek/soler/config"
-
 	"github.com/golang/glog"
 )
 
@@ -53,29 +51,31 @@ const urlBase = "https://monitoringapi.solaredge.com"
 const version = "1.0.0"
 
 type Client struct {
-	Config        config.SolarEdge
+	SiteId        int
+	ApiKey        string
 	HttpClient    *http.Client
 	SolarEdgeHost string
 }
 
-func NewClient(configuration config.Configuration) (*Client, error) {
+func NewClient(site int, apiKey string) (*Client, error) {
 	httpClient := http.Client{
 		Timeout: time.Second * 2,
 	}
 	return &Client{
-		Config:        configuration.SolarEdge,
+		SiteId:        site,
+		ApiKey:        apiKey,
 		HttpClient:    &httpClient,
 		SolarEdgeHost: urlBase,
 	}, nil
 }
 
 func (c *Client) getURL(method string) (*url.URL, error) {
-	u, err := url.Parse(fmt.Sprintf("%s/site/%d/%s", c.SolarEdgeHost, c.Config.Site, method))
+	u, err := url.Parse(fmt.Sprintf("%s/site/%d/%s", c.SolarEdgeHost, c.SiteId, method))
 	if err != nil {
 		return nil, err
 	}
 	q := u.Query()
-	q.Add("api_key", c.Config.ApiKey)
+	q.Add("api_key", c.ApiKey)
 	q.Add("version", version)
 	u.RawQuery = q.Encode()
 	return u, nil
