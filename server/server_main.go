@@ -72,7 +72,7 @@ func main() {
 	http.Handle("/startsense", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	}))
 	http.Handle("/upload", &soler.GreenButtonHandler{Db: database})
-	http.ListenAndServe(":10000", nil)
+	glog.Fatal(http.ListenAndServe(":10000", nil))
 
 }
 

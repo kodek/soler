@@ -1,8 +1,10 @@
 package soler
 
 import (
+	"errors"
 	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/golang/glog"
 	sense "github.com/kodek/sense-api"
 )
@@ -14,21 +16,33 @@ type SenseRecorder struct {
 func (rec *SenseRecorder) StartAndLoop(config Sense) {
 	c, err := sense.NewClient(config.Email, config.Password)
 	if err != nil {
-		panic(err)
+		glog.Fatal("Cannot authenticate to Sense. ", err)
 	}
-	recv := rec.connectOrDie(c)
+
+	operation := func() error {
+		rec.recordIndefinitely(c)
+		glog.Error("Reconnecting...")
+		return errors.New("Retryable error")
+	}
+	err = backoff.Retry(operation, backoff.NewExponentialBackOff())
+	if err != nil {
+		glog.Fatal(err)
+	}
+}
+
+func (rec *SenseRecorder) recordIndefinitely(client sense.Client) {
+	recv := rec.connectOrDie(client)
 
 	throttler := time.NewTicker(2 * time.Second)
-	for range throttler.C {
-		response := <-recv
-
+	for response := range recv {
 		err := rec.Db.AddSenseRealtimePoint(response)
 		if err != nil {
 			glog.Fatal("Cannot write to InfluxDb. ", err)
 		}
-	}
-	glog.Fatal("Lost connection to Sense")
 
+		<-throttler.C
+	}
+	glog.Error("Lost connection to Sense.")
 }
 
 func (rec *SenseRecorder) connectOrDie(c sense.Client) <-chan sense.RealtimeResponse {
