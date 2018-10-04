@@ -11,7 +11,6 @@ import (
 
 type SenseRecorder struct {
 	Db             *Database
-	backoffTracker *backoff.Backoff
 }
 
 func (rec *SenseRecorder) StartAndLoop(config Sense) {
